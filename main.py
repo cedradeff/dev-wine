@@ -3,6 +3,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 from datetime import datetime
 import pandas
 from collections import defaultdict
+import argparse
 
 
 def get_year_word(n: int) -> str:
@@ -17,7 +18,7 @@ def get_year_word(n: int) -> str:
         return "лет"
 
 
-def parse_excel(filename: str) -> list:
+def parse_excel(filename: str) -> dict:
     excel_data_df = pandas.read_excel(filename, sheet_name='Лист1', na_values=" ", keep_default_na=False)
     records = excel_data_df.to_dict(orient='records')
     wines_by_category = defaultdict(list)
@@ -29,6 +30,11 @@ def parse_excel(filename: str) -> list:
 
 
 def main():
+
+    parser = argparse.ArgumentParser(description="Generate wine HTML page from Excel file.")
+    parser.add_argument("excel_file", help="Path to the Excel file (e.g., wine.xlsx)")
+    args = parser.parse_args()
+
     start_year = 1920
     current_year = datetime.now().year
     years = current_year - start_year
@@ -42,7 +48,7 @@ def main():
 
     rendered_page = template.render(
         year_text=f"Уже {years} {get_year_word(years)} с вами",
-        wines=parse_excel("wine3.xlsx"),
+        wines=parse_excel(args.excel_file),
     )
 
     with open('index.html', 'w', encoding="utf8") as file:
