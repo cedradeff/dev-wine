@@ -32,7 +32,11 @@ def parse_excel(filename: str) -> dict:
 def main():
 
     parser = argparse.ArgumentParser(description="Generate wine HTML page from Excel file.")
-    parser.add_argument("excel_file", help="Path to the Excel file (e.g., wine.xlsx)")
+    parser.add_argument(
+        "-f", "--file",
+        default="wine3.xlsx",
+        help="Path to the Excel file (default: wine3.xlsx)"
+    )
     args = parser.parse_args()
 
     start_year = 1920
@@ -48,7 +52,7 @@ def main():
 
     rendered_page = template.render(
         year_text=f"Уже {years} {get_year_word(years)} с вами",
-        wines=parse_excel(args.excel_file),
+        wines=parse_excel(args.file),
     )
 
     with open('index.html', 'w', encoding="utf8") as file:
